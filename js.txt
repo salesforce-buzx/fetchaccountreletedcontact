@@ -1,0 +1,97 @@
+import { LightningElement, api, wire, track } from 'lwc';
+
+import { updateRecord } from 'lightning/uiRecordApi';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { refreshApex } from '@salesforce/apex';
+import findContactByAccountId from '@salesforce/apex/contactdata.findContactByAccountId';
+
+export default class test extends LightningElement {
+    @track columns = [
+        { label: 'Id', fieldName: 'Id' },
+        {
+            label: 'Name',
+            fieldName: 'Url__c',
+            type: 'url',
+            typeAttributes: {
+                label: { fieldName: 'Name' },
+                target: '_blank'
+            },
+            sortable: true
+
+        },
+        {
+            label: 'Email',
+            fieldName: 'Email',
+            type: 'email',
+            sortable: true,
+            editable: true
+
+        }, {
+            label: 'phone',
+            fieldName: 'Phone',
+            type: 'phone',
+            sortable: true,
+            editable: true
+        }, {
+            label: 'websitename',
+            fieldName: 'WebsiteName__c',
+            type: 'url',
+            sortable: true,
+            editable: true
+        }, {
+            label: 'salary',
+            fieldName: 'Salary__c',
+            type: 'currency',
+            sortable: true,
+            editable: true
+        }, {
+            label: 'Birth Date',
+            fieldName: 'Birthdate',
+            type: 'date',
+            sortable: true,
+            editable: true
+        }
+
+
+
+    ];
+    @api recordId;
+
+    @track draftValues = [];
+    //c/accountChildContactLwc
+
+    //
+
+
+    @wire(findContactByAccountId, { accountId: '$recordId' }) contacts;
+    handleSave(event) {
+        const recordInputs = event.detail.draftValues.slice().map(draft => {
+            const fields = Object.assign({}, draft);
+            return { fields };
+        });
+        //updateRecord(recordInputs)
+        console.log('sk', recordInputs);
+        //const promises = recordInputs.map(recordInput => updateRecord(recordInput));
+        const promises = recordInputs.map(recordInput => {
+            console.log('record input', recordInput);
+            updateRecord(recordInput);
+        });
+
+        Promise.all(promises).then(contacts => {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Success',
+                    message: 'All Contacts updated',
+                    variant: 'success'
+                })
+
+            );
+
+
+        })
+        this.draftValues = [];
+        return refreshApex(this.contact);
+
+
+    }
+}

@@ -1,0 +1,52 @@
+
+public with sharing class contactdata {
+    @AuraEnabled(cacheable=true)
+    public static List<contact> findContactByAccountId(String accountId) {     
+        System.debug('>>>>>'+accountId) ;
+        List<Contact> conList = [SELECT Id, name, FirstName,LastName,Email,Phone,Salary__c,Url__c ,Birthdate,MailingAddress,WebsiteName__c,Account.website, Account.Name  
+            FROM Contact 
+            WHERE AccountId=:accountId 
+
+            LIMIT 10];
+
+        List<DataTableWrapper> response = new List<DataTableWrapper>();
+        /*for(Contact c : conList){
+            DataTableWrapper obj = new DataTableWrapper();
+            obj.Id = c.Id;
+            obj.name = c.Name;
+            obj.nameUrl = '/'+c.Id;
+            obj.WebsiteName=c.WebsiteName__c;
+            obj.emailname=c.Email;
+            obj.Phone=c.Phone;
+            obj.salary=c.Salary__c;
+            obj.Birthdate=c.Birthdate;
+
+
+            response.add(obj);
+        }
+
+        return response;*/
+        return conList;
+    }
+
+    private class DataTableWrapper {
+        @AuraEnabled
+        public Id Id {get;set;}
+        @AuraEnabled
+        public String name {get;set;}
+        @AuraEnabled
+        public String nameUrl {get;set;}
+        
+        @AuraEnabled
+        public String WebsiteName {get;set;}
+        @AuraEnabled
+        public decimal salary {get;set;}
+        @AuraEnabled
+        public date Birthdate {get;set;}
+        @AuraEnabled
+        public String Phone {get;set;}
+        @AuraEnabled
+        public String emailname {get;set;}
+
+    }
+}

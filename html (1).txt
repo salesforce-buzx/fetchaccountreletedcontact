@@ -1,0 +1,17 @@
+<template>
+    
+        <lightning-card title="Contact Records">
+            <p><lightning-formatted-number value={Salary} format-style="currency" currency-code="USD" currency-display-as="symbol"></lightning-formatted-number></p>
+            <p><lightning-formatted-phone value={Phone}></lightning-formatted-phone></p>
+            <p><lightning-formatted-date-time value={ActiveDate} year="2-digit" month="short" day="2-digit" weekday="long"></lightning-formatted-date-time></p>
+            <!-- {contacts.data} -->
+            <lightning-datatable if:true={contacts.data}
+                key-field="Id"
+                data={contacts.data}
+                columns={columns}
+                onsave={handleSave}
+                draft-values={draftValues}>
+                
+            </lightning-datatable>
+        </lightning-card>    
+    </template>
